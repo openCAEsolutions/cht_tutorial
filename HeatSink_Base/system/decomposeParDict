@@ -1,0 +1,39 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2212                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      decomposeParDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+numberOfSubdomains 4;
+
+// "scotch" teilt die Regionen topologisch und dynamisch perfekt auf
+method          scotch;
+
+// Falls du Regionen hast, die extrem ungleich groß sind, sorgt dieser Eintrag 
+// dafür, dass die Schnittstellen (Interfaces) zwischen den Regionen 
+// bevorzugt auf demselben Kern landen, was die CHT-Kopplung massiv beschleunigt.
+constraints
+{
+    // KORREKTUR: Name des Blocks geändert, damit der Parser nicht stolpert
+    baffleInterface
+    {
+        type            preservePatches;
+        patches         (heatSink_to_fluidDomain fluidDomain_to_heatSink);
+    }
+}
+
+distributed     no;
+
+roots           ();
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

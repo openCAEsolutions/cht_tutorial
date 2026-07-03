@@ -1,0 +1,2 @@
+For the execution of the openCAE solutions CHT tutorial you need the run_bash.bat which includes the needed bash commands to carry out the openFOAM commands on windows systems.
+The HeatSink_Base folder includes the meshing options as well as the boundaries which are used during the simulation and automation.

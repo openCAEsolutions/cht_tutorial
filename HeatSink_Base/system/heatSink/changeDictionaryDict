@@ -1,0 +1,71 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2212                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      changeDictionaryDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+boundary
+{
+    heater
+    {
+        type            patch; // Der Heater bleibt ein normaler Patch
+    }
+    
+    // KORREKTUR: Auch hier im Mesh den Typ auf mappedWall ändern!
+    heatSink_to_fluidDomain
+    {
+        type            mappedWall;
+        sampleMode      nearestPatchFace;
+        sampleRegion    fluidDomain;
+        samplePatch     fluidDomain_to_heatSink;
+    }
+}
+
+T
+{
+    boundaryField
+    {
+        heater
+        {
+            type            externalWallHeatFluxTemperature;
+            mode            flux;
+            q               uniform 50000;  // Deine Heizleistung in W/m²
+            kappaMethod     solidThermo;
+            value           uniform 293.15;
+        }
+        
+        heatSink_to_fluidDomain
+        {
+            type            compressible::turbulentTemperatureCoupledBaffleMixed;
+            kappaMethod     solidThermo;
+            Tnbr            T;
+            nbrRegion       fluidDomain;
+            value           uniform 293.15;
+        }
+    }
+}
+
+// Setzt automatisch beide Druck-Dummies für den Festkörper auf einmal
+"(p|p_rgh)"
+{
+    boundaryField
+    {
+        ".*"
+        {
+            type            calculated;
+            value           uniform 101325;
+        }
+    }
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

@@ -1,0 +1,58 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2212                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      alphat;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [1 -1 -1 0 0 0 0]; // Einheit: kg/(m s)
+
+internalField   uniform 0;
+
+boundaryField
+{
+    Inlet
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+
+    Outlet
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+
+    fluidDomain_fluid_wall
+    {
+        // Standard-Wandfunktion für den turbulenten Wärmeübergang
+        type            compressible::alphatJayatillekeWallFunction;
+        Prt             0.85; // Turbulente Prandtl-Zahl
+        value           uniform 0;
+    }
+
+    walls
+    {
+        // Standard-Wandfunktion für den turbulenten Wärmeübergang
+        type            compressible::alphatJayatillekeWallFunction;
+        Prt             0.85; // Turbulente Prandtl-Zahl
+        value           uniform 0;
+    }
+
+    fluidDomain_to_heatSink
+    {
+        // Die Wandfunktion für das CHT-Interface
+        type            compressible::alphatJayatillekeWallFunction;
+        Prt             0.85;
+        value           uniform 0;
+    }
+}

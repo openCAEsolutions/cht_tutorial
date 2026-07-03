@@ -1,0 +1,55 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2212                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       volScalarField;
+    object      nut;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [0 2 -1 0 0 0 0]; // Einheit: m²/s
+
+internalField   uniform 0;
+
+boundaryField
+{
+    Inlet
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+
+    Outlet
+    {
+        type            calculated;
+        value           uniform 0;
+    }
+
+    fluidDomain_fluid_wall
+    {
+        // Standard-Wandfunktion für die turbulente Viskosität
+        type            nutkWallFunction;
+        value           uniform 0;
+    }
+
+    walls
+    {
+        // Standard-Wandfunktion für die turbulente Viskosität
+        type            nutkWallFunction;
+        value           uniform 0;
+    }
+
+    fluidDomain_to_heatSink
+    {
+        // Wandfunktion am gekoppelten CHT-Interface
+        type            nutkWallFunction;
+        value           uniform 0;
+    }
+}

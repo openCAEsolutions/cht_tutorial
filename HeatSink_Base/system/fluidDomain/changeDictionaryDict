@@ -1,0 +1,82 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2212                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      changeDictionaryDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Lexikon der Felder, die für die Fluid-Region angepasst werden sollen
+boundary
+{
+    // KORREKTUR: Der Patch-Typ im Mesh muss zwingend mappedWall sein!
+    fluidDomain_to_heatSink
+    {
+        type            mappedWall;
+        sampleMode      nearestPatchFace;
+        sampleRegion    heatSink;
+        samplePatch     heatSink_to_fluidDomain;
+    }
+}
+
+T
+{
+    boundaryField
+    {
+        fluidDomain_to_heatSink
+        {
+            type            compressible::turbulentTemperatureCoupledBaffleMixed;
+            kappaMethod     fluidThermo;
+            Tnbr            T;
+            nbrRegion       heatSink;
+            value           uniform 293.15;
+        }
+    }
+}
+
+p_rgh
+{
+    boundaryField
+    {
+        fluidDomain_to_heatSink
+        {
+            // KORREKTUR: fixedFluxPressure ist der Standard für Wände in CHT
+            type            fixedFluxPressure; 
+            value           uniform 101325;
+        }
+    }
+}
+
+p
+{
+    boundaryField
+    {
+        fluidDomain_to_heatSink
+        {
+            // KORREKTUR: calculated passt perfekt, da p_rgh die Hauptvariable ist
+            type            calculated;
+            value           uniform 101325;
+        }
+    }
+}
+
+U
+{
+    boundaryField
+    {
+        fluidDomain_to_heatSink
+        {
+            type            noSlip; // Haftbedingung an der Kühlkörper-Wand
+        }
+    }
+}
+
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //

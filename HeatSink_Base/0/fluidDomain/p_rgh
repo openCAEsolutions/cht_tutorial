@@ -1,0 +1,53 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  2212                                  |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    arch        "LSB;label=32;scalar=64";
+    class       volScalarField;
+    location    "0/fluidDomain";
+    object      p_rgh;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+dimensions      [ 1 -1 -2 0 0 0 0 ];
+
+internalField   uniform 101325;
+
+boundaryField
+{
+    Inlet
+    {
+        type            fixedFluxPressure;
+        value           uniform 101325;
+    }
+    Outlet
+    {
+        type            fixedValue;
+        value           uniform 101325;
+    }
+    fluidDomain_fluid_wall
+    {
+        type            fixedFluxPressure;
+        value           uniform 101325;
+    }
+    walls
+    {
+        type            fixedFluxPressure;
+        value           uniform 101325;
+    }
+    fluidDomain_to_heatSink
+    {
+        type            fixedFluxPressure;
+        value           uniform 101325;
+    }
+}
+
+
+// ************************************************************************* //

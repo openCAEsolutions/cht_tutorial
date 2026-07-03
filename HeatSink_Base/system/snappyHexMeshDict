@@ -1,0 +1,176 @@
+/*--------------------------------*- C++ -*----------------------------------*\
+| =========                 |                                                 |
+| \\      /  F ield         | OpenFOAM: The Open Source CFD Toolbox           |
+|  \\    /   O peration     | Version:  v2212                                 |
+|   \\  /    A nd           | Website:  www.openfoam.com                      |
+|    \\/     M anipulation  |                                                 |
+\*---------------------------------------------------------------------------*/
+FoamFile
+{
+    version     2.0;
+    format      ascii;
+    class       dictionary;
+    object      snappyHexMeshDict;
+}
+// * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * //
+
+// Which of the steps to run
+castellatedMesh true;
+snap            true;
+addLayers       true;
+
+
+geometry
+{
+    fluidDomain.stl
+    {
+        type triSurfaceMesh;
+        name fluidDomain;
+        scale 0.001;
+	regions
+        {
+            Inlet
+            {
+                name Inlet;
+            }
+	    Outlet
+            {
+                name Outlet;
+            }
+	}
+
+    }
+
+    heatSink.stl
+    {
+        type triSurfaceMesh;
+        name heatSink;
+        scale 0.001;
+	regions
+        {
+            heater
+            {
+                name heater;
+            }
+	}
+
+    }
+
+};
+
+castellatedMeshControls
+{
+    maxLocalCells   200000000;
+    maxGlobalCells  300000000;
+    minRefinementCells 20;
+    nCellsBetweenLevels 2;
+    maxLoadUnbalance 0.1;
+    allowFreeStandingZoneFaces true;
+    resolveFeatureAngle      30;
+    features
+    (
+	{ file "fluidDomain.eMesh"; level 1; }
+        { file "heatSink.eMesh";    level 3; }
+    );
+    refinementSurfaces
+{
+    fluidDomain
+        {
+            level (2 2);
+            cellZone fluidZone;
+            cellZoneInside inside;
+            patchInfo { type wall; }
+            regions
+            {
+                Inlet  { level (2 2); patchInfo { type patch; } }
+                Outlet { level (2 2); patchInfo { type patch; } }
+            }
+        }
+
+
+
+    heatSink
+        {
+            level (4 4); 
+            cellZone heatSink;
+            cellZoneInside inside;
+            patchInfo { type wall; }
+            regions
+            {
+                heater { level (2 2); patchInfo { type wall; } }
+            }
+        }
+}
+
+    refinementRegions
+    {
+    }
+
+    locationsInMesh
+    (
+        (( -0.06 0.005 0.005) fluidDomain )
+        (( 0 0 0.003 ) heatSink )
+    );
+}
+
+
+snapControls
+{
+    tolerance       2;
+    implicitFeatureSnap false;
+    explicitFeatureSnap true;
+    multiRegionFeatureSnap true;
+    detectNearSurfacesSnap true;
+    nSmoothPatch    6;
+    nSolveIter      50;
+    nRelaxIter      15;
+    nFeatureSnapIter 20;
+    nSmoothInternal 5;
+    nFaceSplitInterval -1;
+    meshOnTheBox true;
+    strictRegionSnap true;
+}
+
+
+addLayersControls
+{
+
+    layers
+    {
+        fluidDomain_to_heatSink
+        {
+            nSurfaceLayers 3;
+        }
+    }
+    expansionRatio    1.2;
+    relativeSizes false;
+    firstLayerThickness 0.00009;
+    featureAngle    130;
+    slipFeatureAngle 30;
+    nGrow           0;
+    nBufferCellsNoExtrude 2;
+    minMedialAxisAngle 90;
+    maxFaceThicknessRatio 0.7;
+    maxThicknessToMedialRatio 0.4;
+    minThickness    1e-08;
+    nLayerIter      40;
+    nRelaxIter      8;
+    nSmoothSurfaceNormals 15;
+    nSmoothNormals  3;
+    nSmoothThickness 10;
+    nRelaxedIter    20;
+    nMedialAxisIter 10;
+}
+
+
+meshQualityControls
+{
+    #include "meshQualityDict"
+}
+
+
+debug           0;
+
+mergeTolerance  1e-07;
+
+// ************************************************************************* //
