@@ -109,7 +109,7 @@ castellatedMeshControls
     locationsInMesh
     (
         (( -0.06 0.005 0.005) fluidDomain )
-        (( 0 0 0.003 ) heatSink )
+        (( 0 0 0.001 ) heatSink )
     );
 }
 
